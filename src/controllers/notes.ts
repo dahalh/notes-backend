@@ -1,14 +1,14 @@
 import { RequestHandler } from "express";
 import createHttpError from "http-errors";
-import NoteModel from "../models/note";
 import mongoose from "mongoose";
+import NoteModel from "../models/note";
 import { assertIsDefined } from "../util/assertIsDefined";
 
 export const getNotes: RequestHandler = async (req, res, next) => {
   const authenticatedUserId = req.session.userId;
 
   try {
-    // assertIsDefined(authenticatedUserId);
+    assertIsDefined(authenticatedUserId);
 
     const notes = await NoteModel.find({ userId: authenticatedUserId }).exec();
     res.status(200).json(notes);
@@ -112,7 +112,7 @@ export const updateNote: RequestHandler<
     const note = await NoteModel.findById(noteId).exec();
 
     if (!note) {
-      throw createHttpError(404, "Note no found");
+      throw createHttpError(404, "Note not found");
     }
 
     if (!note.userId.equals(authenticatedUserId)) {
